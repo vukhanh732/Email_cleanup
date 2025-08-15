@@ -123,10 +123,22 @@ export default function App() {
   }
 
   function applyPreset(p) {
+    const base = '(category:promotions OR has:list-unsubscribe)'
     if (p === 'promotions') setQuery('category:promotions')
     if (p === 'newsletters') setQuery('has:list-unsubscribe')
-    if (p === 'older90') setQuery('(category:promotions OR has:list-unsubscribe) older_than:90d')
-    if (p === 'older180') setQuery('(category:promotions OR has:list-unsubscribe) older_than:180d')
+
+    // time-based
+    if (p === 'last7') setQuery(`${base} newer_than:7d`)
+    if (p === 'last30') setQuery(`${base} newer_than:30d`)
+    if (p === 'older90') setQuery(`${base} older_than:90d`)
+    if (p === 'older180') setQuery(`${base} older_than:180d`)
+    if (p === 'older365') setQuery(`${base} older_than:365d`)
+
+    // extra handy presets
+    if (p === 'unreadPromotions') setQuery('category:promotions is:unread')
+    if (p === 'big5mb') setQuery('larger:5M')
+    if (p === 'social') setQuery('category:social')
+    if (p === 'primaryUnread') setQuery('category:primary is:unread')
   }
 
   function stopScan() {
@@ -272,8 +284,10 @@ export default function App() {
         userId: 'me',
         resource: { ids, addLabelIds: archiveOnly ? [] : ['TRASH'], removeLabelIds: archiveOnly ? ['INBOX'] : [] }
       })
-      setStatus(`${archiveOnly?'Archived':'Deleted'} ${ids.length} messages`)
-      await searchMessages()
+      setStatus(`${archiveOnly ? 'Archived' : 'Deleted'} ${ids.length} messages`)
+      // Remove those IDs from our current state instead of rescanning
+      setMessages(prev => prev.filter(m => !ids.includes(m.id)))
+      setSelectedIds(new Set())
     } catch (e) { console.error(e); setStatus(`Error: ${formatGapiError(e)}`) }
   }
 
@@ -335,6 +349,21 @@ export default function App() {
             <button className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow" onClick={()=>applyPreset('newsletters')}>Newsletters</button>
             <button className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow" onClick={()=>applyPreset('older90')}>Older than 90d</button>
             <button className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow" onClick={()=>applyPreset('older180')}>Older than 180d</button>
+            <button className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow"
+                    onClick={()=>applyPreset('last7')}>Last 7d</button>
+            <button className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow"
+                    onClick={()=>applyPreset('last30')}>Last 30d</button>
+            <button className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow"
+                    onClick={()=>applyPreset('older365')}>Older than 1y</button>
+            <button className="px-3 py-1.5 rounded-xl border"
+                    onClick={()=>applyPreset('unreadPromotions')}>Unread promos</button>
+            <button className="px-3 py-1.5 rounded-xl border"
+                    onClick={()=>applyPreset('big5mb')}>Big (5MB)</button>
+            <button className="px-3 py-1.5 rounded-xl border"
+                    onClick={()=>applyPreset('social')}>Social</button>
+            <button className="px-3 py-1.5 rounded-xl border"
+                    onClick={()=>applyPreset('primaryUnread')}>Primary unread</button>
+
           </div>
           <div className="flex items-center gap-2 bg-white/80 rounded-xl px-3 py-2 shadow border border-white/60">
             <Settings className="h-4 w-4"/>
