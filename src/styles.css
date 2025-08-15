@@ -1,0 +1,4 @@
+/* Minimal tweaks; Tailwind handles most styling via classes */
+html, body, #root { height: 100%; }
+.table-fixed { table-layout: fixed; }
+.break-any { word-break: break-word; overflow-wrap: anywhere; }
