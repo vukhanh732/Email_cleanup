@@ -87,41 +87,12 @@ The current app uses a **BYO Client ID** field in the UI by default, so env vars
 │  ├─ main.jsx
 │  └─ styles.css
 ├─ public/
-│  └─ examples/       # put screenshots here (see below)
+│  └─ examples/       
 ├─ index.html
 ├─ package.json
 ├─ vite.config.js
 ├─ .gitignore
 └─ README.md
-```
-
----
-
-## 🖼️ Adding Images (README & App)
-
-### For README screenshots
-1. Put images in **`public/examples/`** (e.g., `public/examples/scan.png`).  
-2. Reference them with a relative path in Markdown so they render on GitHub:
-
-```md
-![Scan screen](public/examples/scan.png)
-![Actions](public/examples/actions.png)
-```
-
-> GitHub renders files relative to the repo root, so `public/examples/your-image.png` works in README.
-
-### For images inside the app (React)
-- Files in `public/` are served at the root. Use `/examples/scan.png` in `src` code:
-
-```jsx
-<img src="/examples/scan.png" alt="Scan UI" />
-```
-
-- Or import images placed under `src/assets/`:
-
-```jsx
-import shot from './assets/scan.png'
-<img src={shot} alt="Scan UI" />
 ```
 
 ---
